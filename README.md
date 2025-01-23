@@ -40,7 +40,6 @@ PanelboardLED/src
 ├── effect_fire_flicker.ino  # Fire Flicker effect implementation
 ├── effect_comet_trail.ino   # Comet Trail effect implementation
 ├── effect_sparkle.ino       # Sparkle effect implementation
-├── README.md                # Documentation
 └── Makefile                 # Makefile for building and uploading
 ```
 
