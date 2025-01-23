@@ -20,14 +20,14 @@ A program to control a WS2812B LED strip and mimic the effects on the Arduino's 
   - Fire Flicker
   - Comet Trail
   - Sparkle
-- **Onboard LED Synchronization:** Mimics strip effects dynamically.
+  - ...and more
 
 ---
 
 ## File Structure
 
 ```
-PanelboardLED/
+PanelboardLED/src
 ├── main.cpp             # Main program file (setup and loop logic)
 ├── config.h             # Configuration for pins, constants, etc.
 ├── utils.h              # Utility functions (e.g., brightness control)
