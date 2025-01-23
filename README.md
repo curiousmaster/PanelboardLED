@@ -32,14 +32,7 @@ PanelboardLED/src
 ├── config.h             # Configuration for pins, constants, etc.
 ├── utils.h              # Utility functions (e.g., brightness control)
 ├── effects.h            # Header file for effect declarations
-├── effect_solid_color.ino   # Solid color effect implementation
-├── effect_rainbow.ino       # Rainbow effect implementation
-├── effect_knight_rider.ino  # Knight Rider effect implementation
-├── effect_theatre_chase.ino # Theater Chase effect implementation
-├── effect_meteor.ino        # Meteor effect implementation
-├── effect_fire_flicker.ino  # Fire Flicker effect implementation
-├── effect_comet_trail.ino   # Comet Trail effect implementation
-├── effect_sparkle.ino       # Sparkle effect implementation
+├── effect_*.ino         # Effect(s)
 └── Makefile                 # Makefile for building and uploading
 ```
 
