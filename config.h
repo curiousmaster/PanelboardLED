@@ -20,6 +20,5 @@
 #define INTERVAL_FLICKER       50  // Interval for Fire Flicker effect
 
 // Other configurations
-#define NUM_EFFECTS 13   // Total number of effects available
 
 #endif // CONFIG_H

@@ -19,7 +19,7 @@ void sparkleStep(Adafruit_NeoPixel& strip, uint32_t color) {
         strip.clear();
 
         // Randomly light up a few LEDs
-        for (int i = 0; i < strip.numPixels() / 5; i++) { // Light up 20% of LEDs
+        for (uint16_t i = 0; i < strip.numPixels() / 5; i++) { // Light up 20% of LEDs
             int randomLED = random(0, strip.numPixels());
             strip.setPixelColor(randomLED, color);
         }

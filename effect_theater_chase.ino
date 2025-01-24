@@ -20,7 +20,7 @@ void theaterChaseStep(Adafruit_NeoPixel& strip, uint32_t color) {
         strip.clear();
 
         // Light up every third LED based on the step
-        for (int i = step; i < strip.numPixels(); i += 3) {
+        for (uint16_t i = step; i < strip.numPixels(); i += 3) {
             strip.setPixelColor(i, color);
         }
 

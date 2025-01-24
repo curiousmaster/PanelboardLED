@@ -9,7 +9,7 @@
  * @param color The color of the bouncing light.
  */
 void knightRiderStep(Adafruit_NeoPixel& strip, uint32_t color) {
-    static int position = 0;       // Current position of the light
+    static uint16_t position = 0;       // Current position of the light
     static bool direction = true; // Direction of movement (true = forward, false = backward)
     static unsigned long lastUpdate = 0;
     const unsigned long interval = 75;  // Speed of the effect

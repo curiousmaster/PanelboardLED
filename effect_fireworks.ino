@@ -9,7 +9,7 @@ void fireworksEffect(Adafruit_NeoPixel& strip) {
     if (millis() - lastUpdate >= interval) {
         lastUpdate = millis();
 
-        for (int i = 0; i < strip.numPixels(); i++) {
+        for (uint16_t i = 0; i < strip.numPixels(); i++) {
             if (random(0, 100) < 5) { // 5% chance of a new firework
                 fireworks[i] = 255;
             }

@@ -9,7 +9,7 @@ void twinkleEffect(Adafruit_NeoPixel& strip, uint32_t color) {
     if (millis() - lastUpdate >= interval) {
         lastUpdate = millis();
 
-        for (int i = 0; i < strip.numPixels(); i++) {
+        for (uint16_t i = 0; i < strip.numPixels(); i++) {
             if (random(0, 100) < 10) { // 10% chance to start twinkling
                 twinkleStates[i] = random(50, 255); // Random brightness
             }

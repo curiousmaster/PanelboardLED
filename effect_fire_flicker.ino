@@ -14,7 +14,7 @@ void fireFlickerStep(Adafruit_NeoPixel& strip) {
     if (millis() - lastUpdate >= interval) {
         lastUpdate = millis();
 
-        for (int i = 0; i < strip.numPixels(); i++) {
+        for (uint16_t i = 0; i < strip.numPixels(); i++) {
             // Generate random brightness values for red, green, and blue channels
             uint8_t r = 255; // Full intensity for red
             uint8_t g = random(50, 150); // Random intensity for green (simulate heat)

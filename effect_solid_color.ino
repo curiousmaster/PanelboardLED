@@ -9,7 +9,7 @@
  * @param color The color to display.
  */
 void solidColorStep(Adafruit_NeoPixel& strip, uint32_t color) {
-    for (int i = 0; i < strip.numPixels(); i++) {
+    for (uint16_t i = 0; i < strip.numPixels(); i++) {
         strip.setPixelColor(i, color);
     }
     strip.show();

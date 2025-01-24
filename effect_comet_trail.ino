@@ -17,7 +17,7 @@ void cometTrailStep(Adafruit_NeoPixel& strip, uint32_t color) {
         lastUpdate = millis();
 
         // Fade all LEDs slightly
-        for (int i = 0; i < strip.numPixels(); i++) {
+        for (uint16_t i = 0; i < strip.numPixels(); i++) {
             uint32_t currentColor = strip.getPixelColor(i);
             uint8_t r = (currentColor >> 16) & 0xFF;
             uint8_t g = (currentColor >> 8) & 0xFF;

@@ -13,7 +13,7 @@ void colorPulseEffect(Adafruit_NeoPixel& strip, uint32_t color) {
         brightness += direction * 5;
         if (brightness >= 255 || brightness <= 0) direction *= -1; // Reverse direction
 
-        for (int i = 0; i < strip.numPixels(); i++) {
+        for (uint16_t i = 0; i < strip.numPixels(); i++) {
             strip.setPixelColor(i, strip.Color((brightness * ((color >> 16) & 0xFF)) / 255,
                                                (brightness * ((color >> 8) & 0xFF)) / 255,
                                                (brightness * (color & 0xFF)) / 255));

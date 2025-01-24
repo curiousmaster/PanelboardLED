@@ -9,7 +9,7 @@ void rainbowChaseEffect(Adafruit_NeoPixel& strip) {
     if (millis() - lastUpdate >= interval) {
         lastUpdate = millis();
 
-        for (int i = 0; i < strip.numPixels(); i++) {
+        for (uint16_t i = 0; i < strip.numPixels(); i++) {
             int hue = (i * 65536L / strip.numPixels()) + chaseOffset * 256;
             strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(hue)));
         }

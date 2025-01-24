@@ -12,16 +12,13 @@ Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 int effectStep = 0;  // Initialize effectStep
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(19200);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP); // Enable internal pull-up resistor on pin 2
     
     strip.begin();
     strip.show();
     currentEffect = EEPROM.read(0);
-    Serial.println("Initiating...");
-
-    delay(2000);
 
     showStatus();
 }
@@ -29,5 +26,5 @@ void setup() {
 void loop() {
     handleButton();
     handleSerialInput();
-    runEffect();
+    runEffect(currentEffect);
 }

@@ -6,12 +6,37 @@
 extern Adafruit_NeoPixel strip;
 extern int currentEffect;
 extern int effectStep;
+static char* lineThick = "======================================================";
+static char* lineThin  = "------------------------------------------------------";
+
+struct Effect {
+    const char* name; // Name of the effect
+    void (*function)(Adafruit_NeoPixel&); // Function pointer for the effect
+};
+
+Effect effects[] = {
+    {"Solid Color",   [](Adafruit_NeoPixel& strip) { solidColorStep(strip, strip.Color(255, 0, 0)); }},
+    {"Rainbow",       rainbowStep},
+    {"Knight Rider",  [](Adafruit_NeoPixel& strip) { knightRiderStep(strip, strip.Color(255, 0, 0)); }},
+    {"Theater Chase", [](Adafruit_NeoPixel& strip) { theaterChaseStep(strip, strip.Color(255, 255, 0)); }},
+    {"Meteor Effect", [](Adafruit_NeoPixel& strip) { meteorEffectStep(strip, strip.Color(0, 0, 255), 20); }},
+    {"Fire Flicker",  [](Adafruit_NeoPixel& strip) { fireFlickerStep(strip); }},
+    {"Comet Trail",   [](Adafruit_NeoPixel& strip) { cometTrailStep(strip, strip.Color(0, 255, 255)); }},
+    {"Twinkle",       [](Adafruit_NeoPixel& strip) { sparkleStep(strip, strip.Color(255, 255, 255)); }},
+    {"Wave",          [](Adafruit_NeoPixel& strip) { sparkleStep(strip, strip.Color(255, 255, 255)); }},
+    {"Color Pulse",   [](Adafruit_NeoPixel& strip) { sparkleStep(strip, strip.Color(255, 255, 255)); }},
+    {"Fireworks",     [](Adafruit_NeoPixel& strip) { sparkleStep(strip, strip.Color(255, 255, 255)); }},
+    {"Rainbow Chase", [](Adafruit_NeoPixel& strip) { sparkleStep(strip, strip.Color(255, 255, 255)); }},
+    {"Sparkle",       [](Adafruit_NeoPixel& strip) { sparkleStep(strip, strip.Color(255, 255, 255)); }}
+};
+
+const int NUM_EFFECTS = sizeof(effects) / sizeof(effects[0]); // Dynamically calculate the number of effects
 
 void clearStrip(Adafruit_NeoPixel& strip) {
-    for (int i = 0; i < strip.numPixels(); i++) {
-        strip.setPixelColor(i, 0);
+    for (uint16_t i = 0; i < strip.numPixels(); i++) { // Use uint16_t for compatibility
+        strip.setPixelColor(i, 0); // Set the pixel color to black
     }
-    strip.show();
+    strip.show(); // Update the strip to turn off all LEDs
 }
 
 void setBrightness(Adafruit_NeoPixel& strip, uint8_t brightness) {
@@ -22,7 +47,6 @@ void setBrightness(Adafruit_NeoPixel& strip, uint8_t brightness) {
 void handleButton() {
     static unsigned long buttonPressTime = 0; // Time when the button was pressed
     static bool buttonPressed = false;       // Tracks if the button is currently pressed
-    const unsigned long debounceDelay = 50;  // Debounce time in milliseconds
     const unsigned long longPressDuration = 1000; // Threshold for a long press (ms)
 
     int buttonState = digitalRead(BUTTON_PIN);
@@ -39,11 +63,12 @@ void handleButton() {
 
             if (pressDuration < longPressDuration) {
                 // Short press: Switch to the next effect
-                Serial.println("Short press detected: Switching to the next effect.");
+                Serial.print(F("Short press detected: Switching to the next effect: "));
+                Serial.print(currentEffect + 1);
                 nextEffect();
             } else {
                 // Long press: Save the current effect as default
-                Serial.println("Long press detected: Saving current effect as default.");
+                Serial.println(F("Long press detected: Saving current effect as default."));
                 saveDefaultEffect();
             }
         }
@@ -76,6 +101,8 @@ void handleSerialInput() {
                 saveDefaultEffect();
             } else if (inputString == "help") {
                 showStatus();
+            } else if (inputString == "show") {
+                showEffectList();
             } else {
                 Serial.println("Unknown command.");
             }
@@ -89,52 +116,60 @@ void handleSerialInput() {
 
 
 void showStatus() {
-    Serial.println("=====================================");
-    Serial.println("PanelboardLED Status:");
-    Serial.print("  Current Effect: ");
+    Serial.println(lineThick);
+    Serial.println(F("PanelboardLED Status:"));
+    Serial.print(F("  Current Effect: "));
     Serial.println(currentEffect);
-    Serial.print("  Effect Name: ");
-    switch (currentEffect) {
-        case 0: Serial.println("  Solid Color"); break;
-        case 1: Serial.println("  Rainbow"); break;
-        case 2: Serial.println("  Knight Rider"); break;
-        case 3: Serial.println("  Theater Chase"); break;
-        case 4: Serial.println("  Meteor Effect"); break;
-        case 5: Serial.println("  Fire Flicker"); break;
-        case 6: Serial.println("  Comet Trail"); break;
-        case 7: Serial.println("  Sparkle"); break;
-        case 8: Serial.println("  Twinkle"); break;
-        case 9: Serial.println("  Wave"); break;
-        case 10: Serial.println(" Color Pulse"); break;
-        case 11: Serial.println(" Fireworks"); break;
-        case 12: Serial.println(" Rainbow Chase"); break;
-        default: Serial.println("  Unknown Effect"); break;
+
+    Serial.print(F("  Effect Name: "));
+    if (currentEffect >= 0 && currentEffect < NUM_EFFECTS) {
+        Serial.println(effects[currentEffect].name); // Dynamically fetch the effect name
+    } else {
+        Serial.println(F("Unknown"));
     }
-    Serial.println("Commands Available:");
-    Serial.println("  next        - Switch to the next effect");
-    Serial.println("  prev        - Switch to the previous effect");
-    Serial.println("  set [index] - Switch to a specific effect");
-    Serial.println("  save        - Save the current effect as default");
-    Serial.println("  help        - Display this help message");
-    Serial.println("=====================================");
+
+    Serial.println(F("Commands Available:"));
+    Serial.println(F("  next        - Switch to the next effect"));
+    Serial.println(F("  prev        - Switch to the previous effect"));
+
+    // Handle dynamic range for set [index]
+    Serial.print(F("  set [index] - Switch to a specific effect (0-"));
+    Serial.print(NUM_EFFECTS - 1);
+    Serial.println(F(")"));
+
+    Serial.println(F("  save        - Save the current effect as default"));
+    Serial.println(F("  show        - Show list of available effects"));
+    Serial.println(F("  help        - Display this help message"));
+    Serial.println(lineThick);
 }
 
-void runEffect() {
-    switch (currentEffect) {
-        case 0: solidColorStep(strip, strip.Color(255, 0, 0)); break;
-        case 1: rainbowStep(strip); break;
-        case 2: knightRiderStep(strip, strip.Color(255, 0, 0)); break;
-        case 3: theaterChaseStep(strip, strip.Color(255, 255, 0)); break;
-        case 4: meteorEffectStep(strip, strip.Color(0, 0, 255), 20); break;
-        case 5: fireFlickerStep(strip); break;
-        case 6: cometTrailStep(strip, strip.Color(0, 255, 255)); break;
-        case 7: sparkleStep(strip, strip.Color(255, 255, 255)); break;
-        case 8: twinkleEffect(strip, strip.Color(0, 0, 255)); break;
-        case 9: waveEffect(strip, strip.Color(0, 0, 255)); break;
-        case 10: colorPulseEffect(strip, strip.Color(0, 0, 255)); break;
-        case 11: fireworksEffect(strip); break;
-        case 12: rainbowChaseEffect(strip); break;
+
+void showEffectList() {
+    Serial.println(lineThick);
+    Serial.print(F("  Current effect: "));
+    Serial.print(effects[currentEffect].name); // Dynamically fetch the effect name
+    Serial.print(F(" ("));
+    Serial.print(currentEffect);
+    Serial.println(F(")"));
+
+    Serial.println(lineThin);
+
+    Serial.println(F("Available Effects:"));
+    for (int i = 0; i < NUM_EFFECTS; i++) {
+        Serial.print(F("  "));
+        if (i < 10) { // Add a leading space for single-digit numbers
+            Serial.print(F(" "));
+        }
+        Serial.print(i);                // Print the index
+        Serial.print(F(": "));
+        Serial.println(effects[i].name); // Print the effect name
     }
+    Serial.println(lineThick);
+}
+
+
+void runEffect(int effectIndex) {
+    showEffect(effectIndex);
 }
 
 void saveDefaultEffect() {
@@ -145,36 +180,19 @@ void saveDefaultEffect() {
 
 void nextEffect() {
     currentEffect = (currentEffect + 1) % NUM_EFFECTS;
-    Serial.print("Switched to next effect: ");
-    Serial.println(currentEffect);
     showEffect(currentEffect);
-    //showStatus();
 }
 
 void prevEffect() {
     currentEffect = (currentEffect - 1 + NUM_EFFECTS) % NUM_EFFECTS;
-    Serial.print("Switched to previous effect: ");
-    Serial.println(currentEffect);
     showEffect(currentEffect);
 }
 
 void showEffect(int effectIndex) {
-    effectStep = 0;
-
-    switch (effectIndex) {
-        case 0: solidColorStep(strip, strip.Color(255, 0, 0)); break;
-        case 1: rainbowStep(strip); break;
-        case 2: knightRiderStep(strip, strip.Color(255, 0, 0)); break;
-        case 3: theaterChaseStep(strip, strip.Color(255, 255, 0)); break;
-        case 4: meteorEffectStep(strip, strip.Color(0, 0, 255), 20); break;
-        case 5: fireFlickerStep(strip); break;
-        case 6: cometTrailStep(strip, strip.Color(0, 255, 255)); break;
-        case 7: sparkleStep(strip, strip.Color(255, 255, 255)); break;
-        case 8: twinkleEffect(strip, strip.Color(0, 0, 255)); break;
-        case 9: waveEffect(strip, strip.Color(0, 0, 255)); break;
-        case 10: colorPulseEffect(strip, strip.Color(0, 0, 255)); break;
-        case 11: fireworksEffect(strip); break;
-        case 12: rainbowChaseEffect(strip); break;
+    if (effectIndex < 0 || effectIndex >= NUM_EFFECTS) {
+        Serial.println("Invalid effect index.");
+        return;
     }
-    //showStatus();
+
+    effects[effectIndex].function(strip); // Call the corresponding effect function
 }
